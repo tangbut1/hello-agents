@@ -2,7 +2,7 @@
 
 把"连哪个模型服务"从写死变成可配置。
 - provider="auto"：按环境变量自动检测
-- 支持：stepfun / openai
+- 支持：stepfun / deepseek
 - 保留第 8 站 think() 的 💭💬 双邮箱流式直播
 """
 from __future__ import annotations
@@ -26,12 +26,12 @@ PROVIDERS: Dict[str, Dict] = {
         "default_model": "step-3.7-flash",
         "fallback_model": "MODEL_NAME",
     },
-    "openai": {
-        "env_key": "OPENAI_API_KEY",
+    "deepseek": {
+        "env_key": "DEEPSEEK_API_KEY",
         "fallback_key": None,
-        "default_base_url": "https://api.openai.com/v1",
+        "default_base_url": "https://api.deepseek.com/v1",
         "fallback_base_url": None,
-        "default_model": "gpt-4o-mini",
+        "default_model": "deepseek-chat",
         "fallback_model": None,
     },
 }
@@ -58,7 +58,7 @@ class HelloAgentsLLM:
     def _auto_detect_provider(self) -> str:
         """按环境变量猜 provider。猜不出就报错说明缺什么。"""
         # TODO: STEPFUN_API_KEY 或 MODEL_API_KEY -> "stepfun"
-        #       OPENAI_API_KEY -> "openai"
+        #       DEEPSEEK_API_KEY -> "deepseek"
         #       都没有 -> raise ValueError
         raise NotImplementedError("第 1 步：填写自动检测")
 
