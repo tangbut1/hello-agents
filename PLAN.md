@@ -65,7 +65,7 @@ class HelloAgentsLLM:
 
 **五条要求**：
 
-1. `provider="auto"` 按环境变量自动猜：有 `STEPFUN_API_KEY` 或 `MODEL_API_KEY` → stepfun；有 `OPENAI_API_KEY` → openai；都没有 → 报错说清楚缺什么
+1. `provider="auto"` 按环境变量自动猜：有 `STEPFUN_API_KEY` 或 `MODEL_API_KEY` → stepfun；有 `DEEPSEEK_API_KEY` → deepseek；都没有 → 报错说清楚缺什么
 2. stepfun 兼容现有 `.env` 命名（`MODEL_API_KEY` / `MODEL_BASE_URL` / `MODEL_NAME`），不填新变量也能跑
 3. 传的参数优先于环境变量（or 短路，沿用第 8 站风格）
 4. 缺配置 fail-fast：`ValueError` 立刻炸
