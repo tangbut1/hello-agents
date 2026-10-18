@@ -27,11 +27,11 @@ PROVIDERS: Dict[str, Dict] = {
         "fallback_model": "MODEL_NAME",
     },
     "deepseek": {
-        "env_key": "DEEPSEEK_API_KEY",
+        "env_key": "sk-fce154fef5db4d35af02911fe45218e6",
         "fallback_key": None,
         "base_url": "https://api.deepseek.com/v1",
         "fallback_base_url": None,
-        "model": "deepseek-chat",
+        "model": "deepseek-flash",
         "fallback_model": None,
     },
 }
@@ -108,7 +108,7 @@ class HelloAgentsLLM:
                 messages=messages,
                 temperature=temperature,
                 stream=True,
-            )
+           )
             collected_content: List[str] = []
             in_thinking = False
             for chunk in stream:
