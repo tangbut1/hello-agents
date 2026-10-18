@@ -24,23 +24,15 @@ class Tool:
         self.parameters = parameters or {}  # 预留：以后接 OpenAI function calling
 
     def run(self, tool_input: str) -> str:
-        """执行工具。异常不许炸掉 agent，变成文字错误返回。
-
-        TODO 1（约 4 行）:
-            try:
-                return str(self.func(tool_input))
-            except Exception as e:
-                return f"工具执行出错: {e}"
-        """
-        raise NotImplementedError("TODO 1: 实现 Tool.run")
+        """执行工具。异常不许炸掉 agent，变成文字错误返回。"""
+        try:
+            return str(self.func(tool_input))
+        except Exception as e:
+            return f"工具执行出错: {e}"
 
     def to_prompt(self) -> str:
-        """给模型看的清单行，格式: -name: description
-
-        TODO 2（1 行）:
-            return f"-{self.name}: {self.description}"
-        """
-        raise NotImplementedError("TODO 2: 实现 Tool.to_prompt")
+        """给模型看的清单行，格式: -name: description"""
+        return f"-{self.name}: {self.description}"
 
     def __repr__(self) -> str:
         return f"Tool({self.name})"

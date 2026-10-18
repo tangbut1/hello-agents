@@ -100,3 +100,4 @@ assert r and len(r) > 10        # 真拿到了回答
 | 2026-10-17 | 第 1 步：llm.py 完成（冒烟通过） | provider 改为 stepfun/deepseek；改动练习跳过 |
 | 2026-10-18 | 第 2 步：message.py / config.py 完成（冒烟通过） | 记忆管理地基就位 |
 | 2026-10-18 | 第 3 步：agent.py 基类完成（冒烟通过） | 真实模型两轮对话验证记忆生效 |
+| 2026-10-18 | 第 4 步：tools/ 工具系统完成（冒烟通过） | Tool + ToolRegistry + 计算器内置工具 |
