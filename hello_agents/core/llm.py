@@ -27,7 +27,7 @@ PROVIDERS: Dict[str, Dict] = {
         "fallback_model": "MODEL_NAME",
     },
     "deepseek": {
-        "env_key": "sk-fce154fef5db4d35af02911fe45218e6",
+        "env_key": "DEEPSEEK_API_KEY",
         "fallback_key": None,
         "base_url": "https://api.deepseek.com/v1",
         "fallback_base_url": None,
