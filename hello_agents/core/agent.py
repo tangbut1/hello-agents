@@ -1,18 +1,24 @@
 """core/agent.py — 所有智能体的公共基类。
 
 契约（每个智能体都必须遵守）：
-1. 持有 llm（模型调用层）和 history（记忆）
+1. 持有 llm（模型调用层）和 memory（记忆）
 2. 实现 run(user_input) -> str：怎么想、怎么行动，子类自己定
 3. 记忆的增删查走基类方法（统一滑窗，防止上下文爆掉）
+
+交互优先（产品魂）：
+- save_state() / load_state()：记忆存档，跨实例继续对话
+- inject()：用户中途插入要求，带着新约束继续
 """
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import List, Optional
+from typing import List, Optional, Union
+from pathlib import Path
 
 from .config import Config
 from .llm import HelloAgentsLLM
-from .message import Message, assistant, clip_history, system, to_openai, user
+from .memory import Memory
+from .message import Message, assistant, system, user
 
 
 class Agent(ABC):
@@ -31,14 +37,18 @@ class Agent(ABC):
         self.system_prompt = system_prompt
         self.max_history = max_history or self.config.max_history_messages
         self.name = name
-        self.history: List[Message] = []
+        self.memory = Memory(max_messages=self.max_history)
         if system_prompt:
-            self.history.append(system(system_prompt))
+            self.memory.add(system(system_prompt))
 
     # ── 记忆管理（所有智能体共用一套规矩）──────────────────
 
+    @property
+    def history(self) -> List[Message]:
+        return self.memory.messages()
+
     def add_message(self, message: Message) -> None:
-        self.history.append(message)
+        self.memory.add(message)
 
     def add_user(self, content: str) -> None:
         self.add_message(user(content))
@@ -48,14 +58,27 @@ class Agent(ABC):
 
     def clear_history(self, keep_system: bool = True) -> None:
         """清空记忆。默认保留系统人设。"""
+        self.memory.clear()
         if keep_system and self.system_prompt:
-            self.history = [system(self.system_prompt)]
-        else:
-            self.history = []
+            self.memory.add(system(self.system_prompt))
 
     def messages_for_llm(self) -> List[dict]:
         """给模型的对话快照：滑窗裁剪 + OpenAI 格式。"""
-        return to_openai(clip_history(self.history, self.max_history))
+        return self.memory.for_llm()
+
+    # ── 交互优先：存档 / 恢复 / 注入 ──────────────────────
+
+    def save_state(self, path: Union[str, Path]) -> Path:
+        """把当前记忆存档到文件。"""
+        return self.memory.save(path)
+
+    def load_state(self, path: Union[str, Path]) -> int:
+        """从文件恢复记忆。返回恢复的消息条数。"""
+        return self.memory.load(path)
+
+    def inject(self, content: str, role: str = "user") -> None:
+        """中途注入一条消息（用户的临时新要求、纠正、补充条件）。"""
+        self.memory.add(Message(role=role, content=content))
 
     # ── 对外的对话入口 ────────────────────────────────────
 
