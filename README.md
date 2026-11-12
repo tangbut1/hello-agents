@@ -1,8 +1,8 @@
-# hello_agents —— 从零实现的智能体框架（学习项目）
+# hello_agents —— 从零实现的轻量 Agent 运行时
 
-跟随《Hello-Agents》第 7 章的学习实践：**不依赖 LangChain / LangGraph 等现成框架**，从零实现一个极简但完整的 Agent 框架，逐模块验证、逐步提交。
+参考《Hello-Agents》第 7 章的路线，**不依赖 LangChain / LangGraph 等现成框架**，从零实现一个可读、可验证的 Agent 运行时：LLM 调用层、消息与滑窗、记忆存档、工具注册、ReAct 循环，逐模块验证、逐步提交。
 
-> 这是一个学习项目，代码以**可读性/教学性**为先（模块小、注释明确、每步配冒烟测试），不是生产级框架。
+> 定位：用来把“框架到底做了什么”拆开看清——模块小、注释明确、每步配冒烟测试；不是万能生产框架，适用边界见文末。
 
 ## 核心特性
 
@@ -13,6 +13,29 @@
 - **工具系统**：Tool + ToolRegistry，工具异常兜底（单个工具出错不中断 Agent）
 - **ReAct 智能体**：思考 → 行动 → 观察循环，最大轮数限制、输出解析容错
 - **真实工具接入**：多轨价格计算工具（封装自 AgentMart 项目的价格引擎）
+
+## 本机运行验证（2026-11-12）
+
+```text
+$ python smoke_core.py
+配置: Config(llm_provider='auto', model=None, ... max_history_messages=20)
+[system] 你是购物参谋，回答必须带证据。
+[user] 降噪耳机怎么选？
+[assistant] 先看降噪深度和佩戴方式。
+[user] 预算一千，头戴式。
+滑窗(保留3条): ['[system] ...', '[assistant] ...', '[user] 预算一千，头戴式。']
+LLM 构造成功: stepfun / step-3.7-flash
+✅ 非法 role 被拦住: 非法 role: 'robot'
+✅ 第 2 步冒烟通过
+
+$ python smoke_tools.py
+工具数: 3
+calculator('(15*8+32)') -> (15*8+32) = 152
+echo('你好') -> 你说: 你好
+broken('x') -> 工具执行出错: 我故意炸的
+no_such_tool('?') -> 未找到
+✅ 第 4 步冒烟通过
+```
 
 ## 目录结构
 
@@ -69,3 +92,11 @@ uv run python smoke_agentmart.py  # 价格引擎工具接入（需 AgentMart 项
 2. **渐进式**：每个模块可独立跑通，再拼装
 3. **可测试**：每一步都有对应冒烟脚本
 4. **交互优先**：记忆可随时存档、暂停、注入新约束
+
+## 适用边界（当前版本）
+
+- 只有**文本协议 ReAct**（`Action: 工具[参数]`），没有原生 `tool_calls` / 参数 schema 校验；
+- 记忆是消息级 JSON 持久化，不支持执行中断 checkpoint 与“执行到哪一步”的状态恢复；
+- 多服务商是**配置选择**，不是故障自动切换（failover）；
+- 没有 MCP、多智能体协作、tracing/可观测、Agent 行为评测集——这些是下一步，不是已实现。
+
