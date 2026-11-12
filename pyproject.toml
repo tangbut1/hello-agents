@@ -1,10 +1,11 @@
-[project]
+﻿[project]
 name = "hello-agents"
 version = "0.1.0"
-description = "Add your description here"
+description = "从零实现的轻量 Agent 运行时与 RAG：LLM 调用 / 消息滑窗 / 记忆 / 工具 / ReAct / BM25 检索"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "openai>=3.33.0",
     "python-dotenv>=1.2.4",
 ]
+
