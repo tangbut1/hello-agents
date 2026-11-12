@@ -108,7 +108,7 @@ uv run python smoke_rag.py        # RAG：切块 / BM25 检索 / 引用回答
 uv run python smoke_rag.py --llm  # 同上，但真实调用模型生成答案（可选）
 ```
 
-## 七步实现路线
+## 八步实现路线
 
 | 步骤 | 模块 | 验证方式 |
 |---|---|---|
