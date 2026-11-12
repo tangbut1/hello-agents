@@ -63,6 +63,15 @@ Q: RAG 为什么要保留引用？
 
 加 `--llm` 会真实调用模型生成带引用答案；模型不可用时自动退化为返回检索原文，**不编答案**。
 
+真实 `--llm` 输出（OpenCode Go / DeepSeek V4.1 Flash，2026-11-12）：
+
+```text
+💭 [思考中] 资料[1][2]重复说明硬规则：金额、优惠、状态交给确定性代码……
+💬 [作答] 资料中没有明确说明“为什么”要把金额交给确定性代码；
+资料只指出这是 AgentMart 的硬规则：金额、优惠、状态交给确定性代码，
+模型只负责理解需求、选择工具和组织解释 [1][2]。
+```
+
 ## 目录结构
 
 ```
@@ -107,6 +116,8 @@ uv run python smoke_agentmart.py  # 价格引擎工具接入（需 AgentMart 项
 uv run python smoke_rag.py        # RAG：切块 / BM25 检索 / 引用回答
 uv run python smoke_rag.py --llm  # 同上，但真实调用模型生成答案（可选）
 ```
+
+> 用 OpenCode Go 时：`MODEL_BASE_URL=https://opencode.ai/inference/go/openai/v1`、`MODEL_NAME=deepseek-v4.1-flash`，并设置 `LLM_SESSION_ID`（网关要求 `x-opencode-session` 头，客户端已支持）。Key 只放本地 `.env`，不要提交。
 
 ## 八步实现路线
 

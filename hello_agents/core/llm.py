@@ -84,7 +84,14 @@ class HelloAgentsLLM:
         self.provider = provider
         self.model = model
         self.base_url = base_url
-        self.client = OpenAI(api_key=api_key, base_url=base_url, timeout=timeout)
+        # 一些网关（如 OpenCode Go）要求稳定的会话头，便于路由与缓存
+        headers = {"User-Agent": os.getenv("LLM_USER_AGENT", "hello-agents/1.0")}
+        session_id = os.getenv("LLM_SESSION_ID") or os.getenv("OPENCODE_SESSION_ID")
+        if session_id:
+            headers["x-opencode-session"] = session_id
+        self.client = OpenAI(
+            api_key=api_key, base_url=base_url, timeout=timeout, default_headers=headers
+        )
 
     def _auto_detect_provider(self) -> str:
         """按环境变量猜 provider。猜不出就报错说明缺什么。"""
